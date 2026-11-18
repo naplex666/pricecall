@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dist-keeper/
+.DS_Store
+*.local
+# Devnet keys — NEVER commit. The builder key lives outside this repo.
+devnet-wallet.json
+.env
+keeper-state.json
