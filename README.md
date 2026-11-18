@@ -151,6 +151,18 @@ Multi-outcome groups, LP dashboard, mobile app, mainnet. Mainnet would
 need real USDC and a separate decision — the code has no mainnet path
 enabled.
 
+## Known issue: the pm-AMM faucet is not dripping SOL right now
+
+New burner wallets get 1,000 test mUSDC from the faucet, but the faucet
+currently returns `sol: 0` (`solSkipped: "reserve"` — verified 18 Nov 2026),
+so a fresh burner has no SOL to pay transaction fees and every trade fails
+at simulation ("This account may not be used to pay transaction fees").
+The app detects this: when a burner holds < 0.003 SOL it shows a warning
+with a link to claim 1 free devnet SOL at
+[faucet.solana.com](https://faucet.solana.com) (GitHub login, ~1 min) and
+disables trading until the wallet is funded. If the faucet resumes its SOL
+drip, one-tap trading works with no manual step.
+
 ## Live verification (devnet, 18 Nov 2026)
 
 Full end-to-end loop verified live with the builder wallet

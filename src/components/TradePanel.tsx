@@ -17,11 +17,14 @@ export function TradePanel({
   client,
   owner,
   onTraded,
+  solLow = false,
 }: {
   market: PriceCallMarket;
   client: PmAmmClient;
   owner: PublicKey;
   onTraded: () => void;
+  /** True when the signer has too little SOL to pay fees — disable buys. */
+  solLow?: boolean;
 }) {
   const [amount, setAmount] = useState("5");
   const [busy, setBusy] = useState<string | null>(null);
@@ -136,6 +139,12 @@ export function TradePanel({
           2% fee on the USDC leg · 1% slippage
         </span>
       </div>
+      {solLow && (
+        <p className="err">
+          Trading disabled: this wallet has no SOL for transaction fees. See
+          the notice above the market list for how to claim free devnet SOL.
+        </p>
+      )}
       {tradable && (
         <>
           <label className="field">
@@ -152,7 +161,7 @@ export function TradePanel({
           <div className="trade-row">
             <button
               className="btn yes"
-              disabled={busy !== null || !qYes}
+              disabled={busy !== null || !qYes || solLow}
               onClick={() => buy("yes")}
               type="button"
             >
@@ -160,7 +169,7 @@ export function TradePanel({
             </button>
             <button
               className="btn no"
-              disabled={busy !== null || !qNo}
+              disabled={busy !== null || !qNo || solLow}
               onClick={() => buy("no")}
               type="button"
             >

@@ -65,6 +65,19 @@ export function App() {
             </button>
           </span>
         )}
+        {status === "ready" && balances && balances.sol < 0.003 && (
+          <p className="err">
+            This burner has no SOL for transaction fees (the pm-AMM faucet is
+            currently not dripping SOL — it returns <code>solSkipped: "reserve"</code>).
+            Claim 1 free devnet SOL for{" "}
+            <span className="addr">{publicKey?.toBase58()}</span> at{" "}
+            <a href="https://faucet.solana.com" target="_blank" rel="noreferrer">
+              faucet.solana.com
+            </a>{" "}
+            (GitHub login, ~1 min), then press Refresh. Trading stays disabled
+            until then.
+          </p>
+        )}
         {status === "error" && (
           <span className="err">
             Burner wallet failed: {error ?? "unknown error"}. Reload to retry — the
@@ -107,6 +120,7 @@ export function App() {
               client={client}
               owner={publicKey}
               onTraded={bump}
+              solLow={balances ? balances.sol < 0.003 : false}
             />
           ) : (
             <p className="muted">Waiting for your burner wallet…</p>
