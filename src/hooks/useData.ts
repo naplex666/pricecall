@@ -8,6 +8,7 @@ import { ASSETS, DEVNET_RPC, POLL_INTERVAL_MS } from "../lib/constants";
 import { createHttpConnection } from "../lib/httpConfirm";
 import { fetchOnChainPrices, type PythPrice } from "../lib/pyth";
 import { createReadOnlyClient, listPriceCallMarkets, type PriceCallMarket } from "../lib/pmamm";
+import { getBuilderPubkey } from "../lib/builderPubkey";
 
 export interface PriceHistory {
   symbol: string;
@@ -68,7 +69,7 @@ export function useMarkets(refreshKey: number) {
     const tick = async () => {
       if (document.hidden) return;
       try {
-        const list = await listPriceCallMarkets(clientRef.current);
+        const list = await listPriceCallMarkets(clientRef.current, getBuilderPubkey());
         if (cancelled) return;
         setMarkets(list);
         setError(null);

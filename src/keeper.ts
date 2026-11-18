@@ -26,12 +26,11 @@
  * (websocket confirmation is broken on this VM — see lib/httpConfirm.ts).
  */
 import fs from "fs";
-import { Connection, Keypair } from "@solana/web3.js";
+import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { AnchorProvider, Wallet } from "@anchor-lang/core";
 import { PmAmmClient } from "@pm-amm/sdk";
 import {
   ASSETS,
-  BUILDER_PUBKEY,
   DEVNET_RPC,
   DISPUTE_WINDOW_SECS,
   MAX_WAIT_AFTER_EXPIRY_SECS,
@@ -192,6 +191,15 @@ async function main(): Promise<void> {
   const connection: Connection = createHttpConnection(rpcUrl, "confirmed");
   const readClient = PmAmmClient.readOnly(connection, PROGRAM_ID, USDC_MINT);
   const kp = loadBuilderKeypair(builderKeyPath);
+  // Builder pubkey from env only — the repo never hardcodes it. Required:
+  // without it the keeper can't tell seeded markets apart.
+  const builderPubkeyRaw = process.env.BUILDER_PUBKEY;
+  if (!builderPubkeyRaw) {
+    throw new Error(
+      "BUILDER_PUBKEY env is required (devnet builder pubkey, never hardcoded in the repo)",
+    );
+  }
+  const BUILDER_PUBKEY = new PublicKey(builderPubkeyRaw);
   if (!kp.publicKey.equals(BUILDER_PUBKEY)) {
     throw new Error(
       `builder key mismatch: ${kp.publicKey.toBase58()} is not the PriceCall builder ${BUILDER_PUBKEY.toBase58()}. Refusing to run.`,
@@ -230,7 +238,7 @@ async function main(): Promise<void> {
       }
       // Market list every ~30s (getProgramAccounts is the expensive call).
       if (tick === 1 || tick % 3 === 0) {
-        markets = await listPriceCallMarkets(readClient);
+        markets = await listPriceCallMarkets(readClient, BUILDER_PUBKEY);
       }
       const due = markets.filter(
         (m) => m.seeded && m.endTs <= now && !m.account.resolved,

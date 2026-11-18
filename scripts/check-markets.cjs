@@ -6,7 +6,9 @@ const { withHttpConfirm } = require("./http-confirm.cjs");
 
 const PROGRAM_ID = new PublicKey("GV1FMGHRYBjQLaghE5fnGuYCuCcpdt3GD5xEX3TwN16y");
 const USDC_MINT = new PublicKey("3WQ8hCqTNwjrh8WzE2XyoZoUrd1miPcwWfMkmFPUMEWZ");
-const BUILDER = new PublicKey("2YJT3QZHdyvF19v6qzvJYqapfDE1HqKSBxPxLdxyQiCv");
+const BUILDER = process.env.BUILDER_PUBKEY
+  ? new PublicKey(process.env.BUILDER_PUBKEY)
+  : null; // never hardcoded — set BUILDER_PUBKEY env to show the balance
 
 (async () => {
   const conn = withHttpConfirm(new Connection("https://api.devnet.solana.com", "confirmed"));
@@ -24,8 +26,10 @@ const BUILDER = new PublicKey("2YJT3QZHdyvF19v6qzvJYqapfDE1HqKSBxPxLdxyQiCv");
       `- #${account.marketId.toString()} ${publicKey.toBase58()} | ${name} | ends ${end} | resolved: ${account.resolved} | winningSide: ${account.winningSide}`,
     );
   }
-  const bal = await conn.getBalance(BUILDER);
-  console.log("builder SOL:", bal / 1e9);
+  if (BUILDER) {
+    const bal = await conn.getBalance(BUILDER);
+    console.log("builder SOL:", bal / 1e9);
+  }
 })().catch((e) => {
   console.error("ERR", e.message);
   process.exit(1);

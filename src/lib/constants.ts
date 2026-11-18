@@ -19,11 +19,6 @@ export const USDC_MINT = new PublicKey(
 export const FAUCET_URL = "https://pm-amm-devnet.vercel.app/api/faucet";
 export const REFERENCE_APP = "https://pm-amm-devnet.vercel.app";
 
-/** Builder wallet that seeds PriceCall markets (and that the keeper resolves for). Devnet only. */
-export const BUILDER_PUBKEY = new PublicKey(
-  "2YJT3QZHdyvF19v6qzvJYqapfDE1HqKSBxPxLdxyQiCv",
-);
-
 /** Every market created through PriceCall carries this name prefix. */
 export const MARKET_NAME_PREFIX = "PriceCall:";
 

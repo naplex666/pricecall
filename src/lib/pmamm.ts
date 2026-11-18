@@ -13,7 +13,6 @@
 import { PublicKey } from "@solana/web3.js";
 import { PmAmmClient, type MarketAccount } from "@pm-amm/sdk";
 import {
-  BUILDER_PUBKEY,
   DEVNET_RPC,
   MARKET_NAME_PREFIX,
   PROGRAM_ID,
@@ -69,9 +68,13 @@ export function createReadOnlyClient(rpc = DEVNET_RPC): PmAmmClient {
   return PmAmmClient.readOnly(connection, PROGRAM_ID, USDC_MINT);
 }
 
-/** All PriceCall markets on devnet (live + recently resolved), newest first. */
+/** All PriceCall markets on devnet (live + recently resolved), newest first.
+ * Pass the builder pubkey (runtime config, never hardcoded) to label which
+ * markets the keeper auto-resolves; without it every market reads as
+ * self-resolved. */
 export async function listPriceCallMarkets(
   client: PmAmmClient,
+  builderPubkey?: PublicKey | null,
 ): Promise<PriceCallMarket[]> {
   const all = await client.fetchAllMarkets(443);
   const out: PriceCallMarket[] = [];
@@ -85,7 +88,7 @@ export async function listPriceCallMarkets(
       direction: parsed.direction,
       strike: parsed.strike,
       endTs: account.endTs.toNumber(),
-      seeded: account.authority.equals(BUILDER_PUBKEY),
+      seeded: builderPubkey ? account.authority.equals(builderPubkey) : false,
     });
   }
   out.sort((a, b) => b.endTs - a.endTs);
