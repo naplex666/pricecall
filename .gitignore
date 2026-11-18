@@ -1,6 +1,7 @@
 node_modules/
 dist/
 dist-keeper/
+tsconfig.tsbuildinfo
 .DS_Store
 *.local
 # Devnet keys — NEVER commit. The builder key lives outside this repo.
