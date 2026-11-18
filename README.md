@@ -165,8 +165,7 @@ drip, one-tap trading works with no manual step.
 
 ## Live verification (devnet, 18 Nov 2026)
 
-Full end-to-end loop verified live with the builder wallet
-`2YJT3QZHdyvF19v6qzvJYqapfDE1HqKSBxPxLdxyQiCv`:
+Full end-to-end loop verified live with the devnet builder wallet (address withheld — devnet only, test funds):
 
 - **Create:** `PriceCall: SOL above 75 @ 2026-11-18T03:44:38Z`, market
   #91574155480457 —
